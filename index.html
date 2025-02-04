@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Aniversario Especial</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(135deg, #ff99cc, #ff6699);
+            font-family: 'Arial', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .selectores {
+            margin-top: 50px;
+            padding: 20px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            z-index: 2;
+        }
+
+        select {
+            padding: 10px;
+            margin: 5px;
+            border: 2px solid #ff3366;
+            border-radius: 8px;
+            font-size: 16px;
+            background: #fff0f5;
+            cursor: pointer;
+        }
+
+        .mensaje {
+            display: none;
+            position: relative;
+            margin-top: 30px;
+            font-size: 2.5em;
+            text-align: center;
+            animation: brillo 2s infinite, latido 1.5s infinite;
+            color: #ff0066;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .tiempo {
+            font-size: 1.2em;
+            color: #660033;
+            margin: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 10px;
+        }
+
+        .corazon {
+            position: fixed;
+            font-size: 24px;
+            animation: flotar 3s linear forwards;
+            pointer-events: none;
+        }
+
+        .confeti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            animation: caer 3s linear forwards;
+        }
+
+        @keyframes brillo {
+            0% { filter: brightness(1); }
+            50% { filter: brightness(1.5); }
+            100% { filter: brightness(1); }
+        }
+
+        @keyframes latido {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes flotar {
+            0% { opacity: 1; transform: translateY(0) rotate(0deg); }
+            100% { opacity: 0; transform: translateY(-100vh) rotate(360deg); }
+        }
+
+        @keyframes caer {
+            0% { transform: translateY(-100vh) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(720deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="selectores">
+        <select id="dia">
+            <option value="">Día</option>
+            <script>
+                for(let d = 1; d <= 31; d++) {
+                    document.write(`<option value="${d}">${d}</option>`);
+                }
+            </script>
+        </select>
+
+        <select id="mes">
+            <option value="">Mes</option>
+            <option value="0">Enero</option>
+            <option value="1">Febrero</option>
+            <option value="2">Marzo</option>
+            <option value="3">Abril</option>
+            <option value="4">Mayo</option>
+            <option value="5">Junio</option>
+            <option value="6">Julio</option>
+            <option value="7">Agosto</option>
+            <option value="8">Septiembre</option>
+            <option value="9">Octubre</option>
+            <option value="10">Noviembre</option>
+            <option value="11">Diciembre</option>
+        </select>
+
+        <select id="anio">
+            <option value="">Año</option>
+            <script>
+                for(let a = 2010; a <= new Date().getFullYear(); a++) {
+                    document.write(`<option value="${a}">${a}</option>`);
+                }
+            </script>
+        </select>
+    </div>
+
+    <div id="mensaje" class="mensaje"></div>
+    <div id="tiempo" class="tiempo"></div>
+
+    <script>
+        const dia = document.getElementById('dia');
+        const mes = document.getElementById('mes');
+        const anio = document.getElementById('anio');
+        const mensaje = document.getElementById('mensaje');
+        const tiempo = document.getElementById('tiempo');
+
+        function crearElementoCelebracion() {
+            const tipos = ['💖', '💕', '🎉', '🥳', '💝', '💘'];
+            const elemento = document.createElement('div');
+            
+            if(Math.random() > 0.5) {
+                elemento.className = 'corazon';
+                elemento.innerHTML = tipos[Math.floor(Math.random() * tipos.length)];
+                elemento.style.left = Math.random() * 100 + 'vw';
+                elemento.style.fontSize = Math.random() * 20 + 20 + 'px';
+            } else {
+                elemento.className = 'confeti';
+                elemento.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                elemento.style.left = Math.random() * 100 + 'vw';
+            }
+            
+            document.body.appendChild(elemento);
+            setTimeout(() => elemento.remove(), 3000);
+        }
+
+        function calcularTiempo() {
+            const inicio = new Date(2019, 3, 24);
+            const hoy = new Date();
+            
+            let años = hoy.getFullYear() - inicio.getFullYear();
+            let meses = hoy.getMonth() - inicio.getMonth();
+            let dias = hoy.getDate() - inicio.getDate();
+
+            if (meses < 0 || (meses === 0 && dias < 0)) {
+                años--;
+                meses += 12;
+            }
+
+            if (dias < 0) {
+                const ultimoDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 0).getDate();
+                dias = ultimoDiaMes - inicio.getDate() + hoy.getDate();
+                meses--;
+            }
+
+            return { años, meses, dias };
+        }
+
+        function iniciarCelebracion() {
+            mensaje.style.display = 'block';
+            mensaje.innerHTML = '🎉 FELICIDADES mi Scarlett 🎉';
+            
+            const { años, meses, dias } = calcularTiempo();
+            tiempo.innerHTML = `💞 Tiempo juntos: 💞<br>
+                ${años} años 🌟<br>
+                ${meses} meses 🌙<br>
+                ${dias} días 🌞`;
+
+            const intervalo = setInterval(crearElementoCelebracion, 50);
+            setTimeout(() => clearInterval(intervalo), 5000);
+        }
+
+        function verificarFecha() {
+            if(dia.value === '24' && mes.value === '3' && anio.value === '2019') {
+                iniciarCelebracion();
+            } else {
+                mensaje.style.display = 'none';
+                tiempo.innerHTML = '';
+            }
+        }
+
+        dia.addEventListener('change', verificarFecha);
+        mes.addEventListener('change', verificarFecha);
+        anio.addEventListener('change', verificarFecha);
+    </script>
+</body>
+</html>
